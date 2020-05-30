@@ -21,7 +21,7 @@
         $stmt -> bindParam(":id", $datos, PDO::PARAM_INT);
         $stmt -> execute();
         $respuesta = $stmt->fetch();
-        //$stmt = null;
+        $stmt = null;
         
         echo '<h3>Editar un registro </h3> 
             
@@ -57,6 +57,7 @@
         ?>
 
         <?php
+        //Actualizar empleado
         if(isset($_POST['nombre'])){
 
             $id_registros       =   $_POST['id'];
@@ -83,14 +84,23 @@
                 
                 $stmt->execute();
 
-                //header("location: selectdata.php");
+                $conn = null;
+
+                header("location: /github/pdocrud/selectdata.php");
 
             } catch(PDOException $e) {
                 echo "**Error: " . $e->getMessage();
             }
-        
-            $conn = null;
 
+            /*if($respuesta){
+                echo "Bien";
+            } else{
+                echo "error";
+            }
+
+            if($respuesta == "Bien"){
+                header("location: /github/pdocrud/selectdata.php");
+            }*/      
         }
         
               

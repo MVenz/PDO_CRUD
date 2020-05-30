@@ -13,23 +13,24 @@
 
 
 <?php
-
+error_reporting(0);
+//Obtener datos
 require_once 'database.php';
 
 echo "<table class='table'>";
-echo "<tr><th>Id</th><th>Nombre</th><th>Apellido Paterno</th><th>Apellido Materno</th><th>Edad</th><th>E-Mail</th><th>Acciones</th></tr>";
+echo "<tr><th>Id</th><th>Nombre</th><th>Apellido Paterno</th><th>Apellido Materno</th><th>Edad</th><th>E-Mail</th><th>Editar</th><th>Borrar</th></tr>";
 
 //$sentencia = "SELECT id_registros, nombre, a_paterno, a_materno, edad, email FROM registros";
-$sentencia = "SELECT * FROM registros";
+$sentenciaSELECT = "SELECT * FROM registros";
 
-$stmt = $conn->prepare($sentencia);
+$stmt = $conn->prepare($sentenciaSELECT);
 $stmt->execute();
 
-//guardar en una variable los datos buscados
+//guardar en una variable los datos buscados y encontrados en la BD
 $respuesta = $stmt->fetchAll();
 $stmt = null;//cerrar la conexión, los datos ya los obtuvo del servidor
 
-//ordenar los datos en la tabla
+//ordenar los datos encontrados en una tabla
 foreach ($respuesta as $key => $value) {
   
   echo '<tr>
@@ -40,11 +41,24 @@ foreach ($respuesta as $key => $value) {
           <td>'.  $value["edad"]        . '</td>
           <td>'.  $value["email"]       . '</td>
 
-          <td><a href="editar.php?id='. $value["id_registros"].'"><button>Editar</button></a></td>
-          <td><a href="editar.php?id='. $value["id_registros"].'"><button>Borrar</button></a></td>         
+          <td><a href="editar.php?id='. $value["id_registros"].'"> <span class="material-icons">edit</span>     </a></td>
+          <td><a href="selectdata.php"> <span class="material-icons">cancel</span>   </a></td>
         </tr>';
 }
 echo "</table>";
+
+
+//Eliminar datos
+
+$sentenciaDELETE = "DELETE FROM registros WHERE id_registros = :id_registros";
+$stmt = $conn->prepare($sentenciaDELETE);
+$id_registros = $_GET["id_registros"];
+
+$stmt -> bindParam(":id_registros", $id_registros, PDO::PARAM_INT);
+
+$stmt->execute();
+
+$stmt = null;
 
 ?>
     
