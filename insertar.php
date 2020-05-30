@@ -60,13 +60,16 @@ $apellido_paterno   =   $_GET['apellido_paterno'];
 $apellido_materno   =   $_GET['apellido_materno'];
 $edad               =   $_GET['edad'];
 $email              =   $_GET['email'];
-$sql                =   "INSERT INTO `registros` (`nombre`,`a_paterno`,`a_materno`,`edad`,`email`) VALUES (:nombre, :a_paterno, :a_materno, :edad, :email)";
+$sql                =   "INSERT INTO `registros` (`nombre`,`a_paterno`,`a_materno`,`edad`,`email`)
+                        VALUES (:nombre, :a_paterno, :a_materno, :edad, :email)";
 
 try { 
     // prepare sql and bind parameters
     $stmt = $conn->prepare($sql);
     
     //bind parameters
+    //               parámetro      variable            data type
+    //               base de datos  formulario (name)   tipo de dato
     $stmt->bindParam(':nombre',     $nombre,            PDO::PARAM_STR);
     $stmt->bindParam(':a_paterno',  $apellido_paterno,  PDO::PARAM_STR);
     $stmt->bindParam(':a_materno',  $apellido_materno,  PDO::PARAM_STR);

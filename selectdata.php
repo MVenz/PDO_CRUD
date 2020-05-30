@@ -5,56 +5,48 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
     <link rel="shortcut icon" href="icons8-home-64.png" type="image/png">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet">
     <title>PDO S.A. de C.V. | Select Data</title>
 </head>
 <body>
 
 
 <?php
-echo "<table style='border: solid 1px black;'>";
-echo "<tr><th>Id</th><th>Nombre</th><th>Apellido Paterno</th><th>Apellido Materno</th><th>Edad</th><th>E-Mail</th></tr>";
-
-class TableRows extends RecursiveIteratorIterator {
-  
-    function __construct($it) {
-    parent::__construct($it, self::LEAVES_ONLY);
-  }
-
-  function current() {
-    return "<td style='width:150px;border:1px solid black;'>" . parent::current() . "</td>";
-  }
-
-  function beginChildren() {
-    echo "<tr>";
-  }
-
-  function endChildren() {
-    echo "</tr>" . "\n";
-  }
-}
 
 require_once 'database.php';
 
-try {
-  $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
-  $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+echo "<table class='table'>";
+echo "<tr><th>Id</th><th>Nombre</th><th>Apellido Paterno</th><th>Apellido Materno</th><th>Edad</th><th>E-Mail</th><th>Acciones</th></tr>";
+
+//$sentencia = "SELECT id_registros, nombre, a_paterno, a_materno, edad, email FROM registros";
+$sentencia = "SELECT * FROM registros";
+
+$stmt = $conn->prepare($sentencia);
+$stmt->execute();
+
+//guardar en una variable los datos buscados
+$respuesta = $stmt->fetchAll();
+$stmt = null;//cerrar la conexión, los datos ya los obtuvo del servidor
+
+//ordenar los datos en la tabla
+foreach ($respuesta as $key => $value) {
   
-  $stmt = $conn->prepare("SELECT id_registros, nombre, a_paterno, a_materno, edad, email FROM registros");
-  $stmt->execute();
+  echo '<tr>
+          <td>'.  $value["id_registros"]. '</td>
+          <td>'.  $value["nombre"]      . '</td>
+          <td>'.  $value["a_paterno"]   . '</td>
+          <td>'.  $value["a_materno"]   . '</td>
+          <td>'.  $value["edad"]        . '</td>
+          <td>'.  $value["email"]       . '</td>
 
-  // set the resulting array to associative
-  $result = $stmt->setFetchMode(PDO::FETCH_ASSOC);
-  foreach(new TableRows(new RecursiveArrayIterator($stmt->fetchAll())) as $k=>$v) {
-    echo $v;
-  }
-} catch(PDOException $e) {
-  echo "Error: " . $e->getMessage();
+          <td><a href="editar.php?id='. $value["id_registros"].'"><button>Editar</button></a></td>
+          <td><a href="editar.php?id='. $value["id_registros"].'"><button>Borrar</button></a></td>         
+        </tr>';
 }
-$conn = null;
 echo "</table>";
+
 ?>
-
-
     
 </body>
 </html>
